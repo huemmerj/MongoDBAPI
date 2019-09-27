@@ -4,8 +4,10 @@ module.exports = {
   entry: './src/index.ts',
   devtool: 'inline-source-map',
   devServer: {
-  contentBase: './dist'
+    contentBase: './dist',
+    port: 3000
   },
+  target: 'node',
   module: {
     rules: [
       {
