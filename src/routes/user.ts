@@ -9,5 +9,8 @@ router.post('/', (req, res) => {
     testDB.collection('test').insertOne(req.body)
     res.status(200).json("hat gefunkt")
 })
+router.get('/', (req, res) => {
+    res.status(200).json({hallo: 'hallo'})
+})
 
 export default router

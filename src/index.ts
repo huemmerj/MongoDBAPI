@@ -6,3 +6,5 @@ const app = express()
 app.use(bodyParser)
 
 app.use('/user', userRoutes)
+
+app.listen(3000)
