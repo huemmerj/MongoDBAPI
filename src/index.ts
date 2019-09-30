@@ -1,10 +1,13 @@
-import * as express from 'express'
-import * as bodyParser from 'body-parser'
-import userRoutes from './routes/user'
-const app = express()
-console.log("test")
-app.use(bodyParser)
+const http = require('http');
+const App = require('./app');
+const port = process.env.PORT || 3001;
+const server = http.createServer(App);
 
-app.use('/user', userRoutes)
+server.listen(port);
 
-app.listen(3000)
+// Here HMR story begins
+declare const module: any;
+if (module.hot) {
+    module.hot.accept();
+ module.hot.dispose(() => server.close());
+}
