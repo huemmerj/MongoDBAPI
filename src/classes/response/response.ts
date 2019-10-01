@@ -1,5 +1,5 @@
+import { HttpStatusCode } from './errorCodes'
 export interface ImyResponse {
-  data: object
-  statusCode: number
+  statusCode: HttpStatusCode
   getStatusCode():number
 }

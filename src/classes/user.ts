@@ -1,7 +1,10 @@
 import { MongoHelper } from '../mongo/mongoHelper'
 import { ImyResponse } from './response/response'
 import { SuccessResponse } from './response/success'
-export class User {
+import { ErrorResponse } from './response/error'
+import { IModel } from './model'
+import { HttpStatusCode } from './response/errorCodes'
+export class User  implements	IModel{
   private name: string
   private email: string
 
@@ -10,13 +13,18 @@ export class User {
     this.email = email
     return this
   }
+
   public async save (): Promise<ImyResponse>{
     const client = await MongoHelper.getClient()
     const db = client.db('test')
-    await db.collection('user').insertOne(this)
-    const data = new Array<User>()
-    data.push(this)
-    return new SuccessResponse(data, 200)
+    return new Promise<ImyResponse>((resolve, reject)=>{
+      db.collection('user').insertOne(this).then((user)=>{
+        console.log("hajljöajj")
+        resolve(new SuccessResponse(200, this))
+      }).catch((err => {
+        console.log(err)
+        return new ErrorResponse(HttpStatusCode.BAD_GATEWAY, err)
+      }))
+    })
   }
-
 }
