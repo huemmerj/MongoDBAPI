@@ -15,14 +15,10 @@ export class User {
       email: this.email
     }
   }
-  public async save (): Response {
+  public async save () {
     const client = await MongoHelper.getClient()
     const db = client.db('test')
-    try {
-      await db.collection('user').insertOne(this.getOwnData())
-    } catch (err) {
-
-    }
+    await db.collection('user').insertOne(this.getOwnData())
   }
 
 }
