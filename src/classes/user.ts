@@ -23,7 +23,8 @@ export class User  implements	IModel{
         resolve(new SuccessResponse(200, this))
       }).catch((err => {
         console.log(err)
-        return new ErrorResponse(HttpStatusCode.BAD_GATEWAY, err)
+        //errorklasse baun
+        // return new ErrorResponse(HttpStatusCode.CONFLICT, err)
       }))
     })
   }
