@@ -1,6 +1,5 @@
-export interface MyResponse {
-  response: object
+export interface ImyResponse {
+  data: object
   statusCode: number
-  getResponse():object
   getStatusCode():number
 }

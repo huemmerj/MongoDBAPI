@@ -3,10 +3,10 @@ import { User } from '../classes/user'
 
 const router = express.Router()
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     console.log(req)
-    const user = new User(req.body.name, req.body.email).save()
-    res.status(200).json({message: "jo"})
+    const response = await new User(req.body.name, req.body.email).save()
+    res.status(response.statusCode).json(response)
 })
 router.get('/', (req, res) => {
     res.status(200).json({hallo: 'hallo'})

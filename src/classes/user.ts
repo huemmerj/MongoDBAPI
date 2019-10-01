@@ -1,5 +1,6 @@
 import { MongoHelper } from '../mongo/mongoHelper'
-
+import { ImyResponse } from './response/response'
+import { SuccessResponse } from './response/success'
 export class User {
   private name: string
   private email: string
@@ -9,16 +10,13 @@ export class User {
     this.email = email
     return this
   }
-  private getOwnData():object {
-    return {
-      name: this.name,
-      email: this.email
-    }
-  }
-  public async save () {
+  public async save (): Promise<ImyResponse>{
     const client = await MongoHelper.getClient()
     const db = client.db('test')
-    await db.collection('user').insertOne(this.getOwnData())
+    await db.collection('user').insertOne(this)
+    const data = new Array<User>()
+    data.push(this)
+    return new SuccessResponse(data, 200)
   }
 
 }
