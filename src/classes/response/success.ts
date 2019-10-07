@@ -1,5 +1,5 @@
 import { ImyResponse } from './response'
-import { HttpStatusCode } from './errorCodes'
+import { HttpStatusCode } from './statusCodes'
 import { IModel } from '../model'
 import { execSync } from 'child_process'
 export class SuccessResponse<T> implements ImyResponse{

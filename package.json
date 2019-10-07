@@ -8,7 +8,8 @@
     "build": "webpack",
     "start": "webpack-dev-server --open",
     "build:dev": "webpack --config webpack.config.js",
-    "start:dev": "node dist/server"
+    "start:dev": "node dist/server",
+    "nodemon:dev": "nodemon server.ts"
   },
   "author": "",
   "license": "ISC",
