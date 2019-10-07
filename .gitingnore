@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.cache/
+npm error.log
+npm-error.log

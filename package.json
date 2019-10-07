@@ -1,0 +1,15 @@
+{
+  "name": "zert-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.fis-asp.de:j.huemmer/zert-manager.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
