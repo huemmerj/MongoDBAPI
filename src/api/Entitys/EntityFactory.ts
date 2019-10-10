@@ -9,8 +9,12 @@ import { keys } from 'ts-transformer-keys';
 import { User } from './User'
 import { validate } from 'class-validator';
 import { ErrorResponse, ResponseError, ErrorTitles } from '../Response/error';
+
+export interface Entity{
+  setData
+}
 export abstract class EntityFactory<T> {
-  entity: T
+  entity: Entity
   tablename: string
   client
   db
@@ -30,11 +34,11 @@ export abstract class EntityFactory<T> {
         }else {
           this.response = new SuccessResponse(HttpStatusCode.OK, result)
         }
-
     })
   }
-  public createEntity(data: T) {
-    this.entity = data
+  public async createEntity(data: T) {
+    this.entity.setData(data)
+    await this.validate()
   }
   public getResponse() {
     return this.response
@@ -68,6 +72,8 @@ export abstract class EntityFactory<T> {
       this.db.collection(this.tablename).insertOne(this.entity).then(entity => {
         this.response = new SuccessResponse(HttpStatusCode.CREATED, entity)
         resolve(entity)
+      }).catch(err => {
+
       })
     })
   }
@@ -75,9 +81,11 @@ export abstract class EntityFactory<T> {
     await validate(this.entity).then(errors =>{
     if (errors.length !== 0) {
       let errorResponse = new ErrorResponse(HttpStatusCode.UNPROCESSABLE_ENTITY)
-      Object.values(errors[0].constraints).forEach(element => {
-        errorResponse.addError(new ResponseError(ErrorTitles.INVALID_ATTRIBUTE, element))
-      });
+      errors.forEach(error=>{
+        Object.values(error.constraints).forEach(element => {
+          errorResponse.addError(new ResponseError(ErrorTitles.INVALID_ATTRIBUTE, element))
+        });
+      })
       this.response = errorResponse
       throw new Error(errors.toString())
     }
