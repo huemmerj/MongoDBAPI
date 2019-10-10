@@ -1,24 +1,28 @@
 import * as mongo from 'mongodb';
  
-export class MongoHelper {
+export class ConnectionManager {
   private static client: mongo.MongoClient;
-    
+  private static url: any ='mongodb://localhost:27017/test' 
+
   public static async getClient():Promise<mongo.MongoClient> {
-    if (!MongoHelper.client){
-        await MongoHelper.connect('mongodb://localhost:27017/test')
+    if (!ConnectionManager.client){
+        await ConnectionManager.connect(ConnectionManager.url)
     }
-    return MongoHelper.client
+    return ConnectionManager.client
   }
   constructor() {
   }
- 
+  static async getCollection(collectionName: string){
+    const client = await this.getClient()
+    return client.db('test').collection(collectionName)
+  }
   private static connect(url: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       mongo.MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true}, (err, client: mongo.MongoClient) => {
         if (err) {
           reject(err);
         } else {
-          MongoHelper.client = client;
+          ConnectionManager.client = client;
           resolve(client);
         }
       });
@@ -26,6 +30,6 @@ export class MongoHelper {
   }
  
   public disconnect(): void {
-    MongoHelper.client.close();
+    ConnectionManager.client.close();
   }
 }

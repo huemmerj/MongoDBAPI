@@ -5,21 +5,14 @@ export class SuccessResponse<T> implements IResponse{
   statusCode: HttpStatusCode
   data: Array<T>
 
-  constructor(statusCode: HttpStatusCode, data: T | Array<T>){
-    
-    let dataArray = new Array<T>()
-    if (data instanceof Array) {
-      dataArray = data
-    } else {
-      dataArray = new Array<T>()
-      dataArray.push(data)
-    }
-    this.data = dataArray
+  constructor(statusCode: HttpStatusCode, data?:Array<T>){
     this.statusCode = statusCode
+    this.data = new Array<T>()
+    if (data){
+      this.data = data
+    }
   }
-  getStatusCode(): HttpStatusCode {
-    return this.statusCode
+  public addEntry(entry:T){
+    this.data.push(entry)
   }
-
-
 }

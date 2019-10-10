@@ -14,7 +14,7 @@ export class ErrorResponse implements IResponse {
     this.statusCode = statusCode
     this.errors = new Array<ResponseError>()
   }
-  public addError(error: ResponseError) {
+  public addEntry(error: ResponseError) {
     this.errors.push(error)
   }
 }

@@ -1,40 +1,47 @@
 import * as express from 'express'
-import { UserFactory, User} from '../Entitys/User'
+import { UserManager, User} from '../Entitys/User'
 import { SuccessResponse } from '../Response/Success'
 import { IResponse } from '../Response/response'
 
-const userFactory = new UserFactory()
 const router = express.Router()
 
-router.post('/', async (req, res) => {
+router.get('/', async (req, res) => {
+    const userManager = new UserManager()
     try {
-        await userFactory.createEntity(req.body)
-        await userFactory.save()
-    } catch (err) {
+        await userManager.getEntitys(req.query)
+    } finally {  
+        const response = userManager.getResponse()
+        res.status(response.statusCode).json(response)
     }
-    const response = userFactory.getResponse()
-    res.status(response.statusCode).json(response)
 })
 router.get('/:userId', async (req, res) => {
-    await userFactory.getEntityById(req.params.userId)
-    const response = userFactory.getResponse()
-    res.status(response.statusCode).json(response)
-})
-router.get('/', async (req, res) => {
-    // kake mit req zu arbeiten
-    userFactory.getEntitys(req)
-    const response = userFactory.getResponse()
-    res.status(response.statusCode).json(response)
-})
-router.delete('/:userId', async (req, res) => {
+    const userManager = new UserManager()
     try {
-        await userFactory.deleteEntity(req.params.userId)
-    } catch (err) {
-
+        await userManager.getEntityById(req.params.userId)
+    } finally {
+        const response = userManager.getResponse()
+        res.status(response.statusCode).json(response)
     }
-    const response = userFactory.getResponse()
-    res.status(response.statusCode).json(response)
-   
-    
+})
+router.post('/', async (req, res)=>{
+    const userManager = new UserManager()
+    try {
+        await userManager.createEntity(req.body)
+        await userManager.save()
+    } catch {}
+    finally {
+        const response = userManager.getResponse()
+        res.status(response.statusCode).json(response)
+    }
+})
+router.delete('/:userId', async (req, res)=> {
+    const userManager = new UserManager()
+    try {
+        await userManager.deleteEntity(req.params.userId)
+    } catch {}
+    finally {
+        const response = userManager.getResponse()
+        res.status(response.statusCode).json(response)
+    }
 })
 export default router
