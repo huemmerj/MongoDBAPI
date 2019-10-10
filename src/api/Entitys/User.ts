@@ -1,6 +1,6 @@
 import { EntityManager} from './EntityManager'
 import * as express from 'express'
-import {validate, validateOrReject, Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max, IsString, IsOptional} from "class-validator";
+import {validate, validateOrReject, Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max, IsString, IsOptional, IsArray} from "class-validator";
 import { ErrorResponse, ErrorTitles, ResponseError } from '../Response/error';
 import { HttpStatusCode } from '../Response/statusCodes';
 import { isObject } from 'util';
@@ -14,9 +14,13 @@ export class User implements IEntity {
   @IsString()
   name
 
-  setData({email, name}: {email: string, name: string}){
+  @IsArray()
+  items
+
+  setData({email, name, items}: {email: string, name: string, items: Array<object>}){
     this.email = email
     this.name = name
+    this.items = items
   }
 }
 

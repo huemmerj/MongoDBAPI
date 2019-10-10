@@ -47,7 +47,7 @@ export abstract class EntityManager {
   }
   async getEntityById(id: string):Promise<IEntity>{
     const collection: MongoDb.Collection = await ConnectionManager.getCollection(this.collectionName)
-    return new Promise<IEntity>(async (resolve, reject) => {
+    return new Promise<IEntity>((resolve, reject) => {
       collection.findOne({_id: new MongoDb.ObjectID(id)}).then(entity => {
         if (!entity) {
           this.response = new ErrorResponse(HttpStatusCode.UNPROCESSABLE_ENTITY)
@@ -66,8 +66,8 @@ export abstract class EntityManager {
   }
   async getEntitys (query: object):Promise<Array<IEntity>>{
     const collection: MongoDb.Collection = await ConnectionManager.getCollection(this.collectionName)
-    return new Promise<Array<IEntity>>(async (resolve, reject) => {
-      await collection.find(query).toArray().then(entitys => {
+    return new Promise<Array<IEntity>>((resolve, reject) => {
+      collection.find(query).limit(100000).toArray().then(entitys => {
         this.response = new SuccessResponse(HttpStatusCode.OK, entitys)
         resolve(entitys)
       }).catch(err => {
