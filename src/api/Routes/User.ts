@@ -8,6 +8,10 @@ import { runInNewContext } from 'vm'
 const router = express.Router()
 
 let userManager = new UserManager()
+router.use((req,res,next)=>{
+    userManager = new UserManager()
+    next()
+})
 router.get('/', async (req, res, next) => {
     try {
         await userManager.getEntitys(req.query)
@@ -15,7 +19,6 @@ router.get('/', async (req, res, next) => {
     next()
 })
 router.get('/:userId', async (req, res, next) => {
-    const userManager = new UserManager()
     try {
         await userManager.getEntityById(req.params.userId)
     } catch {}
