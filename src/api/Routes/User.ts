@@ -24,26 +24,18 @@ router.get('/:userId', async (req, res, next) => {
     } catch {}
     next()
 })
-router.post('/', async (req, res)=>{
-    const userManager = new UserManager()
+router.post('/', async (req, res, next)=>{
     try {
         await userManager.createEntity(req.body)
         await userManager.save()
     } catch {}
-    finally {
-        const response = userManager.getResponse()
-        res.status(response.statusCode).json(response)
-    }
+    next()
 })
-router.delete('/:userId', async (req, res)=> {
-    const userManager = new UserManager()
+router.delete('/:userId', async (req, res, next)=> {
     try {
         await userManager.deleteEntity(req.params.userId)
     } catch {}
-    finally {
-        const response = userManager.getResponse()
-        res.status(response.statusCode).json(response)
-    }
+    next()
 })
 router.post('/machvoll', async (req, res)=> {
     await machVoll()

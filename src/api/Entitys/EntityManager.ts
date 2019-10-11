@@ -12,6 +12,7 @@ import { ErrorResponse, ResponseError, ErrorTitles } from '../Response/error';
 import { IEntity } from './IEntity';
 import { rejects } from 'assert';
 import { resolve } from 'dns';
+import { ClassValidatorHelper } from '../Helpers/Class-Validator';
 
 export abstract class EntityManager {
   entity: IEntity
@@ -20,89 +21,68 @@ export abstract class EntityManager {
   constructor(collectionName: string) {
     this.collectionName = collectionName
   }
-  public async deleteEntity(id: string):Promise<object>{
+  public async deleteEntity(id: string) {
     const collection = await ConnectionManager.getCollection(this.collectionName)
-    return new Promise<object>((resolve, reject) =>{
-      collection.deleteOne({_id: new MongoDb.ObjectID(id)}).then(result => {
-        if (result.deletedCount === 0) {
-          this.response = new ErrorResponse(HttpStatusCode.UNPROCESSABLE_ENTITY)
-          this.response.addEntry(new ResponseError(ErrorTitles.ENTITY_NOT_FOUND))
-          reject()
-          return
-        }
-        this.response = new SuccessResponse(HttpStatusCode.OK)
-        this.response.addEntry(result)
-        resolve(this.entity)
-      }).catch(err => {
-        this.response = new ErrorResponse(HttpStatusCode.CONFLICT)
-      })
+      await collection.deleteOne({_id: new MongoDb.ObjectID(id)}).then(result => {
+      if (result.deletedCount === 0) {
+        this.response = new ErrorResponse(HttpStatusCode.UNPROCESSABLE_ENTITY)
+        this.response.addEntry(new ResponseError(ErrorTitles.ENTITY_NOT_FOUND))
+        throw new Error()
+      }
+      this.response = new SuccessResponse(HttpStatusCode.OK)
+      this.response.addEntry(result)
+    }).catch(err => {
+      this.response = new ErrorResponse(HttpStatusCode.CONFLICT)
+      throw new Error(err)
     })
   }
-  public async createEntity(data: object): Promise<IEntity> {
+  public async createEntity(data: object) {
     this.entity.setData(data)
-    return await this.validate()
+    await this.validate()
   }
   public getResponse() {
     return this.response
   }
-  async getEntityById(id: string):Promise<IEntity>{
+  async getEntityById(id: string) {
     const collection: MongoDb.Collection = await ConnectionManager.getCollection(this.collectionName)
-    return new Promise<IEntity>((resolve, reject) => {
-      collection.findOne({_id: new MongoDb.ObjectID(id)}).then(entity => {
-        if (!entity) {
-          this.response = new ErrorResponse(HttpStatusCode.UNPROCESSABLE_ENTITY)
-          this.response.addEntry(new ResponseError(ErrorTitles.ENTITY_NOT_FOUND, id))
-          reject()
-          return
-        }
-          this.response= new SuccessResponse(HttpStatusCode.OK)
-          this.response.addEntry(entity)
-          resolve(entity)
-      }).catch(err => {
-        this.response = new ErrorResponse(HttpStatusCode.CONFLICT)
-        reject(err)
-      })
+    await collection.findOne({_id: new MongoDb.ObjectID(id)}).then(entity => {
+      if (!entity) {
+        this.response = new ErrorResponse(HttpStatusCode.UNPROCESSABLE_ENTITY)
+        this.response.addEntry(new ResponseError(ErrorTitles.ENTITY_NOT_FOUND, id))
+        throw new Error()
+      }
+        this.response= new SuccessResponse(HttpStatusCode.OK)
+        this.response.addEntry(entity)
+    }).catch(err => {
+      this.response = new ErrorResponse(HttpStatusCode.CONFLICT)
+      throw new Error(err)
     })
   }
-  async getEntitys (query: object):Promise<Array<IEntity>>{
+  async getEntitys (query: object){
     const collection: MongoDb.Collection = await ConnectionManager.getCollection(this.collectionName)
-    return new Promise<Array<IEntity>>((resolve, reject) => {
-      collection.find(query).limit(100000).toArray().then(entitys => {
-        this.response = new SuccessResponse(HttpStatusCode.OK, entitys)
-        resolve(entitys)
-      }).catch(err => {
-        this.response = new ErrorResponse(HttpStatusCode.CONFLICT)
-        reject(err)
-      })
+    await collection.find(query).limit(100000).toArray().then(entitys => {
+      this.response = new SuccessResponse(HttpStatusCode.OK, entitys)
+    }).catch(err => {
+      this.response = new ErrorResponse(HttpStatusCode.CONFLICT)
+      throw new Error(err)
     })
   }
-  async save ():Promise<object>{
+  async save (){
     const collection: MongoDb.Collection = await ConnectionManager.getCollection(this.collectionName)
-    return new Promise<object>((resolve, reject)=> {
-      collection.insertOne(this.entity).then(result => {
-        this.response = new SuccessResponse(HttpStatusCode.CREATED, result.ops)
-        resolve(result.ops[0])
-      }).catch(err=> {
-        this.response = new ErrorResponse(HttpStatusCode.CONFLICT)
-        reject()
-      })
+    await collection.insertOne(this.entity).then(result => {
+      this.response = new SuccessResponse(HttpStatusCode.CREATED, result.ops)
+    }).catch(err=> {
+      this.response = new ErrorResponse(HttpStatusCode.CONFLICT)
+      throw new Error(err)
     })
   }
-  async validate(): Promise<IEntity>{
-    return new Promise<IEntity>((resolve, reject)=>{
-      validate(this.entity).then(errors =>{
-        if (errors.length !== 0) {
-          this.response = new ErrorResponse(HttpStatusCode.UNPROCESSABLE_ENTITY)
-          errors.forEach(error=>{
-            Object.values(error.constraints).forEach(element => {
-              this.response.addEntry(new ResponseError(ErrorTitles.INVALID_ATTRIBUTE, element))
-            });
-          })
-          reject()
-          return
-        }
-        resolve(this.entity)
-      })
+  async validate() {
+    await validate(this.entity).then(errors =>{
+      if (errors.length !== 0) {
+        this.response = ClassValidatorHelper.getAllErrors(new ErrorResponse(HttpStatusCode.UNPROCESSABLE_ENTITY), errors)
+        
+        throw new Error()
+      }
     })
   }
 }

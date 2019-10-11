@@ -1,11 +1,8 @@
 import { EntityManager} from './EntityManager'
-import * as express from 'express'
-import {validate, validateOrReject, Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max, IsString, IsOptional, IsArray} from "class-validator";
-import { ErrorResponse, ErrorTitles, ResponseError } from '../Response/error';
-import { HttpStatusCode } from '../Response/statusCodes';
-import { isObject } from 'util';
+import { IsEmail, IsString, IsArray, ValidateNested, ArrayContains} from "class-validator";
 import { IEntity } from './IEntity';
-import { emit } from 'cluster';
+
+import { ItemManager, Item } from './Item'
 
 export class User implements IEntity {
   @IsEmail()
@@ -13,14 +10,22 @@ export class User implements IEntity {
 
   @IsString()
   name
+  
+  @ValidateNested({each: true
+  })
+  items: Item[]
 
-  @IsArray()
-  items
-
-  setData({email, name, items}: {email: string, name: string, items: Array<object>}){
+  setData({email, name, items, item}: {email: string, name: string, items: Array<Item>, item: Item}){
     this.email = email
     this.name = name
-    this.items = items
+    const newItem = new Item()
+    if (items) {
+      this.items = new Array<Item>()
+      items.forEach(item => {
+        newItem.setData(item)
+        this.items.push(newItem)
+      })
+    }
   }
 }
 
