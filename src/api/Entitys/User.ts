@@ -34,4 +34,9 @@ export class UserManager extends EntityManager {
     super('user')
     this.entity = new User()
   }
+  public isAdmin(): Function{
+    ( res, req, next)=> {
+      
+    }
+  }
 }
