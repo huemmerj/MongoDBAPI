@@ -4,7 +4,6 @@ import { ConnectionManager } from '../Mongo/ConnectionManager';
 import * as MongoDb from 'mongodb'
 import { SuccessResponse } from '../Response/Success';
 import { HttpStatusCode } from '../Response/statusCodes';
-import { keys } from 'ts-transformer-keys';
 
 import { User } from './User'
 import { validate } from 'class-validator';
