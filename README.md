@@ -1,7 +1,17 @@
 # MongoDB API with ExpressJs Template
 
-This Project can be used to write a Simple RestAPI using express.js with an MongoDB Database. It also supports nested Resources (like here in this example the User has multiple Items)
-For creating a new Resource you just need to have a look at the example i provided in this project. 
+This Project can be used to write a Simple RestAPI using express.js with an MongoDB Database.
+
+
+## Features
+- nested Resources
+- Resource Validation
+
+
+## Usage
+To create a new Resource with all the CRUD Operations, you have to create a new Entity in the Entity folder and a new route in the routes Folder. Then You need to add your new route to the server.ts file. And thats It!
+
+Please have a look at my provided examples in the entity and routes folder, if you want to know how to structur your entity and routes.
 
 ## The Key of this project
 
