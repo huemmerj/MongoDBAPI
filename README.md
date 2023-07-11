@@ -1,4 +1,4 @@
-# MongoDB API with ExpressJs Template
+# MongoDB RestAPI with ExpressJs
 
 This Project can be used to write a Simple RestAPI using express.js with an MongoDB Database.
 
